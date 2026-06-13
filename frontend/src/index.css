@@ -1,0 +1,186 @@
+/**
+ * 星智股全局样式与设计令牌 —— "墨金终端" 设计方向
+ *
+ * 设计决策（依据 ui-ux-pro-max 设计库检索 + frontend-design 反 AI 味原则）：
+ * - 反模式规避：禁用"AI 紫粉渐变"（设计库明确列为 fintech 反模式）
+ * - 方向：墨色底 + 香槟金品牌色（金融语境的高级感），红涨绿跌保持语义专属
+ * - 数据字体：JetBrains Mono（金融终端味），中文 UI 走系统黑体栈
+ * - 稳定 hover：用颜色/描边/阴影过渡，不用位移（避免布局抖动）
+ */
+@import 'tailwindcss';
+/* 数据/数字专用等宽字体（本地打包，不依赖外网 CDN） */
+@import '@fontsource-variable/jetbrains-mono';
+
+/* Tailwind v4 的暗色变体声明：.dark 容器内 dark: 前缀生效 */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------- 浅色主题（暖纸白 + 深金） ---------------- */
+:root {
+  --background: #f7f7f5; /* 暖调纸白（Stripe 式 off-white，避免冷蓝 AI 感） */
+  --foreground: #16181d;
+  --card: #ffffff;
+  --card-foreground: #16181d;
+  --popover: #ffffff;
+  --popover-foreground: #16181d;
+  --primary: #b27a1e; /* 深金：浅色下保证对比度 */
+  --primary-foreground: #ffffff;
+  --secondary: #efeeea;
+  --secondary-foreground: #16181d;
+  --muted: #efeeea;
+  --muted-foreground: #5a6370;
+  --accent: #f3ede0; /* 金色 tint 的悬浮底色 */
+  --accent-foreground: #16181d;
+  --destructive: #dc2626;
+  --border: rgba(20, 22, 28, 0.1);
+  --input: rgba(20, 22, 28, 0.14);
+  --ring: #b27a1e;
+
+  /* ---- 星智股扩展令牌 ---- */
+  --text-muted: #8a909b;
+  --gold: #b27a1e; /* 品牌金（浅色用深金） */
+  --gold-bright: #d99a2b; /* 高亮金：徽标/AI 元素 */
+  --up: #de3140; /* 涨（红）—— 浅色下加深保对比 */
+  --down: #0a8a73; /* 跌（绿） */
+  --flat: #8a909b;
+}
+
+/* ---------------- 深色主题（默认：墨黑 + 香槟金） ---------------- */
+.dark {
+  --background: #0a0c10; /* 墨黑（去蓝调，更接近 OLED 终端） */
+  --foreground: #f0f2f5;
+  --card: #11141a;
+  --card-foreground: #f0f2f5;
+  --popover: #181c24;
+  --popover-foreground: #f0f2f5;
+  --primary: #e8a33d; /* 香槟金 */
+  --primary-foreground: #1a1206; /* 金底上的墨字 */
+  --secondary: #181c24;
+  --secondary-foreground: #f0f2f5;
+  --muted: #181c24;
+  --muted-foreground: #99a1ad;
+  --accent: #1d212b;
+  --accent-foreground: #f0f2f5;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.07);
+  --input: rgba(255, 255, 255, 0.1);
+  --ring: #e8a33d;
+
+  --text-muted: #5a6370;
+  --gold: #e8a33d;
+  --gold-bright: #f0b254;
+  --up: #f23645; /* 涨（红）TradingView 同款 */
+  --down: #089981; /* 跌（绿） */
+  --flat: #99a1ad;
+}
+
+/* ---------------- Tailwind 工具类映射 ---------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* 星智股扩展：text-gold、text-up、bg-down 等工具类由此而来 */
+  --color-gold: var(--gold);
+  --color-gold-bright: var(--gold-bright);
+  --color-up: var(--up);
+  --color-down: var(--down);
+  --color-flat: var(--flat);
+  --color-text-muted: var(--text-muted);
+
+  /* 数据/数字专用字体：font-data 工具类 */
+  --font-data: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+
+  /* 圆角阶梯（UI 规范：卡片 16px / 子卡 12px / 控件 10px） */
+  --radius-card: 16px;
+  --radius-inner: 12px;
+  --radius-control: 10px;
+}
+
+/* ---------------- 全局基础样式 ---------------- */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family:
+      'HarmonyOS Sans SC',
+      'MiSans',
+      'PingFang SC',
+      'Microsoft YaHei UI',
+      'Microsoft YaHei',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    /* 行情数字不跳动的关键：等宽数字 */
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Tailwind v4 预设把 button 还原成 cursor:default，这里统一恢复可点击手势 */
+  button,
+  [role='button'] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+
+  /* 键盘导航可见的焦点环（可访问性要求） */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* 页面氛围底光：极低透明度的金色辉光 + 顶部冷光，制造层次而非纯平黑 */
+.dark body {
+  background-image:
+    radial-gradient(1200px 500px at 85% -10%, rgba(232, 163, 61, 0.06), transparent 60%),
+    radial-gradient(900px 400px at -10% 110%, rgba(80, 120, 200, 0.05), transparent 60%);
+  background-attachment: fixed;
+}
+:root:not(.dark) body {
+  background-image: radial-gradient(
+    1000px 420px at 90% -10%,
+    rgba(178, 122, 30, 0.05),
+    transparent 60%
+  );
+  background-attachment: fixed;
+}
+
+/* 细滚动条（金融工具的高密度界面细节） */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--muted);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
