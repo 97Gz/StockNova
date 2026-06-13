@@ -1,0 +1,24 @@
+# 星智股 StockNova · 一键启动
+#   docker compose up -d        # 后台启动
+#   访问 http://localhost:8000  # 前端 + API 同源
+#
+# 首次启动后进入「设置中心」配置 AI Key 并初始化历史数据；
+# 数据持久化在命名卷 stocknova-data（/data），重启/升级不丢。
+
+services:
+  stocknova:
+    build: .
+    image: stocknova:latest
+    container_name: stocknova
+    ports:
+      - "8000:8000"
+    volumes:
+      - stocknova-data:/data
+    environment:
+      # 容器内监听全网卡（宿主通过端口映射访问）
+      STOCKNOVA_HOST: "0.0.0.0"
+      STOCKNOVA_DATA_DIR: "/data"
+    restart: unless-stopped
+
+volumes:
+  stocknova-data:

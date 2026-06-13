@@ -1,0 +1,36 @@
+# 构建上下文瘦身：把不需要进镜像的目录排除，加快构建、减小体积
+.git
+.github
+.refs
+.shots
+docs
+marketing
+desktop/build
+desktop/dist
+
+# 数据与日志（容器内用 /data 卷）
+**/data
+**/logs
+**/*.log
+**/*.duckdb
+**/*.duckdb.wal
+**/*.db
+**/*.sqlite*
+
+# Python 缓存与虚拟环境（镜像里重新 uv sync）
+**/__pycache__
+**/*.py[cod]
+**/.venv
+**/.pytest_cache
+**/.ruff_cache
+**/.mypy_cache
+
+# 前端依赖与产物（镜像里重新构建）
+**/node_modules
+frontend/dist
+**/.vite
+
+# 杂项
+**/.DS_Store
+**/.env
+**/.env.*

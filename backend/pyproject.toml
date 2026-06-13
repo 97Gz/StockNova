@@ -1,0 +1,66 @@
+[project]
+name = "stocknova-backend"
+version = "0.1.0"
+description = "星智股（StockNova）后端服务：行情数据、策略引擎、回测、AI 分析"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    # Web 框架：提供 REST API 与 WebSocket（类似 ASP.NET Core 的角色）
+    "fastapi>=0.115",
+    # ASGI 服务器：运行 FastAPI 应用（standard 附带性能与重载组件）
+    "uvicorn[standard]>=0.34",
+    # ORM：操作 SQLite 业务库（自选股/持仓/策略配置等）
+    "sqlalchemy>=2.0",
+    # 嵌入式列存分析库：存放全市场行情，选股/回测的全市场扫描在这里完成
+    "duckdb>=1.1",
+    # 配置管理：从环境变量/默认值加载应用配置，带类型校验
+    "pydantic-settings>=2.6",
+    # A 股免费数据源聚合库：历史日线/股票名录/板块/财务等（主数据适配器的底层）
+    "akshare>=1.18.64",
+    # 表格数据处理：行情清洗、指标计算、回测全部基于 DataFrame
+    "pandas>=3.0.3",
+    # 进程内定时任务调度器：每日收盘后增量同步、盘中轮询（类似 Windows 计划任务）
+    "apscheduler>=3.11.2",
+    # 汉字转拼音：股票名生成首字母缩写（如 贵州茅台→gzmt），支撑搜索
+    "pypinyin>=0.55.0",
+    # 现代 HTTP 客户端：腾讯/新浪实时报价接口直连（支持异步）
+    "httpx>=0.28.1",
+]
+
+[dependency-groups]
+# 开发期依赖：代码检查、测试
+dev = [
+    "ruff>=0.8",
+    "pytest>=8.3",
+    # FastAPI 的测试客户端依赖 httpx 发起请求
+    "httpx>=0.28",
+    # 支持 async def 测试函数（报价轮询等异步链路的单测）
+    "pytest-asyncio>=1.4.0",
+]
+# 桌面端打包：PyWebView 套壳 + 系统托盘 + PyInstaller 绿色版
+# 安装：uv sync --group desktop（仅打包机需要，普通运行/Docker 不装）
+desktop = [
+    "pywebview>=5.3",
+    "pyinstaller>=6.11",
+    "pystray>=0.19",
+    "pillow>=11.0",
+]
+
+# ---------------- 工具配置 ----------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F: 基础错误与风格；I: import 排序；UP: 现代语法升级建议；B: 常见坑检测
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.ruff.lint.per-file-ignores]
+# B008（默认参数里调用函数）对 FastAPI 是误报：Depends() 写在参数默认值
+# 正是 FastAPI 官方的依赖注入写法
+"app/api/*" = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# async 测试：自动识别 async def 测试函数，无需逐个标记
+asyncio_mode = "auto"
